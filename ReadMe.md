@@ -95,3 +95,37 @@ const person =  {
     age : 30
 }
 ```
+
+### 5. Array
+- hobbies : ['Sports','Cooking']
+- 배열은 타입스크립트의 타입 추론이 얼마나 역동적인지 알려주는 좋은 예시이다.
+- 예를들어, 아래와 같이 hobbies라는 key에 배열을 value로 할당했을 때,
+```TS
+const person =  {
+    name : 'Noah',
+    age : 30,
+    hobbies : ['Sports','Cooking']
+}
+```
+- for문을 통해 hobby를 가져오게 되면
+```TS
+for (const hobby of person.hobbies) {
+    console.log(hobby);
+}
+```
+- 콘솔에 실제로 찍히는 것을 볼 수 있다. 또한 hobby에서 아래와 같이 대문자로 만들기 위해서 UpperCase를 찍어보면 실제로 자동완성으로 찍히는 것을 볼 수 있다.
+```TS
+for (const hobby of person.hobbies) {
+    console.log(hobby.toUpperCase);
+}
+```
+- 이는 타입스크립트가 hobbies가 문자열의 배열타입이라고 이해하기 때문이다.
+- 즉, person.hobbies를 입력하면 타입스크립트는 hobbies를 문자열의 배열이라고 인식하게 된다.
+- 그렇기 때문에 문자열로 지정되는 hobby를 사용하여 문자열과 관련된 어떠한 작업이든 가능하게 해준다.
+- 만약에 여기서 hobby에 map 속성을 쓰고자 하면 hobby는 문자열이기 때문에 사용할 수 없다고 알려준다.
+```TS
+for (const hobby of person.hobbies) {
+    console.log(hobby.toUpperCase());
+    console.log(hobby.map()); // 'string' 형식에 'map' 속성이 없습니다.
+}
+```
