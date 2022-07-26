@@ -22,26 +22,76 @@
 - 즉, 특정변수나 상수에 어떤 타입을 사용했는지를 타입스크립트는 아주 잘 이해한다는 것이다.
 - 아래와 같이 number1 이란는 변수는 5라는 상수로 고정되어 있기 때문에, 단순히 숫자 타입인 것보다 더욱 구체적인 것이다.
 
-```
+```ts
 const number1 = 5; // const number1: 5
 ```
 - 이를 let으로 변경해도 아무것도 바뀌지 않지만, let은 불변이 아니기 때문에 최선도 최악도 아닌 상태인 것이다. 
 - number1에 호버시 더이상 상수 5가 되어야 한다고 하지는 않지만 여전히 number임은 추론할 수 있다.
-```
+```ts
 let number1 = 5; // let number1: number
 ```
 - 물론, 아래와 같이 let에서 선언 한 후에 타입을 명시해 줄수 있지만, 이는 반복되는 작업이고 충분히 추론에 의해 알 수 있기 때문에 좋은 작업이 아니다.
-```
+```ts
 let number1 : number = 5;
 ```
 - 하지만 처음부터 값을 지정하지 않을 때는 타입스크립트에 타입을 먼저 알려주는 것이 좋다.
-```
+```ts
 let number1 : number; // 값을 할당하지 않음.
 number1 = 5;
 ```
 - 근데 보통 이렇게 하지 않음.
 - 또한 처음 초기화 값으로 타입을 추론하기 때문에 이후에 다른 타입의 데이터로 재할당하면 오류가 발생한다.
-```
+```ts
 let resultPhrase = 'Result is : ' // Type String
 resultPhrase = 5 // 오류 발생
+```
+
+### 4. Object
+- {age : 30}
+- 중괄호 안에 Key : value 형식으로 저장됨.
+```ts
+const person = {
+    name : 'Noah',
+    age : 30
+}
+```
+- 위와 같이 객체를 선언하고 났을 때 아래와 같이 콘솔에서 보고자 한다면,
+```ts
+console.log(person.nickname);
+```
+- 오류가 나는데 그 이유는 person 안에 nickname 이라는 key가 없기 때문이다.
+- person 객체에 마우스를 호버하면 아래와 같이 타입스크립트가 추론한 객체 타입을 볼 수 있다.
+```ts
+const person: {
+    name: string;
+    age: number;
+}
+```
+ - 이는 어딘가에 생성되는 자바스크립트 객체가 아니라 타입스크립트가 추론한 객체 타입이다.
+ - 그래서 person에 아래와 같이 object라는 타입을 주게 되면, 콘솔에서도 name을 불러올수 가 없다.
+ ```ts
+const person : object = {
+    name : 'Noah',
+    age : 30
+}
+```
+- 왜냐하면 object 타입이라고 명시했지만 그 안에 name이라는 Key가 없기 때문이다. 
+- 즉 여기서 타입스크립트는 어떤 정보도 주지 않는 객체가 있다고 이해하는 것이다.
+- 이를 해결하기 위해서는 아래와 같이 구체적으로 지정해야 한다.
+ ```ts
+const person : {
+    name : string;
+    age : number;
+} = {
+    name : 'Noah',
+    age : 30
+}
+```
+- 하지만 앞서 살펴본것 처럼 타입을 명시적으로 지정하는 것은 좋은 작업 방식은 아니다.
+- 최선의 방식은 아래와 같다.
+```TS
+const person =  {
+    name : 'Noah',
+    age : 30
+}
 ```
