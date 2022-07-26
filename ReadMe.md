@@ -187,4 +187,56 @@ person.role = [0,'admin','User'] // 이것도 불가능, 요소가 너무 많다
 ```
 - 즉 배열에 정확히 X개의 값이 필요하고 각 값의 타입을 미리 알고 있는 상황에서는 배열보다는 튜플을 사용하여 작업중인 데이터 타입과 예상되는 데이터 타입을 명확하게 파악할수 있음.
 
+### 7. Enum
+- enum {a, b}
+- 열거 목록
+- 마지막에는 열거된 목록들은 0부터 시작하는 숫자로 변환된다.
+- 예를 들어 작업자 별로 코드를 부여한다고 하자.
+- 허가자는 0번, 열람가능자는 1번, 작가는 2번이라고 지정하고 이를 코드에서 사용하기 위해서는 아래와 같이 전역변수로 선언해야 한다.
+```TS
+const ADMIN = 0;
+const READ_ONLY = 1;
+const AUTHOR = 2;
 
+const person = {
+    name : 'Noah',
+    age : 30,
+    hobbies : ['Sports','Cooking'],
+    role : ADMIN
+}
+```
+- 이와 똑같은 작업을 Enum을 통해 해결할 수 있다.
+- enum을 지정할 때는 각 키워드를 대문자로 설정해야 한다.
+```TS
+enum Role {ADMIN, READ_ONLY, AUTHOR} // 0,1,2
+
+const person = {
+    name : 'Noah',
+    age : 30,
+    hobbies : ['Sports','Cooking'],
+    role : Role.ADMIN
+}
+```
+- 위와 같이 enum으로 각 키워드를 설정하게 되면 자동으로 각각의 키워드에 번호가 0번부터 부여되고 그 다음 부터는 1씩 늘어난다.
+- 물론 처음 시작 번호를 본인 임의로 변경할수도 있고 
+```TS
+enum Role {ADMIN = 5, READ_ONLY, AUTHOR} // 5,6,7
+
+const person = {
+    name : 'Noah',
+    age : 30,
+    hobbies : ['Sports','Cooking'],
+    role : Role.ADMIN
+}
+```
+- 각 키워드에 각기 다른 번호를 부여할 수도 있다.
+```TS
+enum Role {ADMIN = 5, READ_ONLY, AUTHOR} // 5,6,7
+
+const person = {
+    name : 'Noah',
+    age : 30,
+    hobbies : ['Sports','Cooking'],
+    role : Role.ADMIN
+}
+```
