@@ -231,7 +231,7 @@ const person = {
 ```
 - 각 키워드에 각기 다른 번호를 부여할 수도 있다.
 ```TS
-enum Role {ADMIN = 5, READ_ONLY, AUTHOR} // 5,6,7
+enum Role {ADMIN = 100, READ_ONLY = 200, AUTHOR = 300} 
 
 const person = {
     name : 'Noah',
@@ -240,3 +240,26 @@ const person = {
     role : Role.ADMIN
 }
 ```
+- string을 부여할 수도 있다.
+```TS
+enum Role {ADMIN = 'ADMIN', READ_ONLY =200, AUTHOR = 300}
+
+const person = {
+    name : 'Noah',
+    age : 30,
+    hobbies : ['Sports','Cooking'],
+    role : Role.ADMIN
+}
+```
+
+### 8. Any
+- 가장 유연한 타입으로 어떤 타입의 데이터도 저장 가능하다.
+- 하지만, Any는 바닐라 자바스크립트를 사용하는 것과 다를 바가 없기 때문에 타입스크립트의 장점을 전혀 이용할수가 없다.
+- 타입을 Any로 지정하는 순간, 타입스크립트는 검사할 부분이 없기 때문에 컴파일러가 작동하지 않는다.
+- 따라서, 어떤 값이나 종류의 데이터가 어디에 저장될지 전혀 알 수 없는 경우이거나
+- 런타임 도중, 특정 값에 수행하고자 하는 작업의 범위를 좁히기 위해서 any가 아닌 경우에는
+```TS
+if ( typeof n1 !== 'number' || typeof n2 !== 'number') {
+    throw new Error('Incorrect Error')
+}
+- 사용하지 않는 것이 좋다.
