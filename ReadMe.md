@@ -262,4 +262,147 @@ const person = {
 if ( typeof n1 !== 'number' || typeof n2 !== 'number') {
     throw new Error('Incorrect Error')
 }
-- 사용하지 않는 것이 좋다.
+```
+- 어쨋든 최대한 사용하지 않는 것이 좋다.
+
+### 9. Union Type
+- 한 매게변수 안에 여러가지의 타입을 허용하기 위해 사용
+- 예를 들어 두가지 input을 합치는 함수가 있다고 가정해보자
+```TS
+function combine(input1:number, input2:number) {
+    const result = input1 + input2;
+    return result;
+}
+```
+- 이렇게 된 함수에 인자들은 모두 number type이기 때문에 아래와 같이 코드를 작성할 경우 
+```TS
+const combinedAges = combine(30,26)
+console.log(combinedAges)
+```
+- 콘솔에는 56이라고 찍히게 된다.
+- 하지만 문제는 여기서 두가지 문자열을 합치려고 한다면?
+```TS
+const combineName = combine('Max', 'Anna')
+console.log(combineName);
+```
+- 첫번쨰 인자인 'Max'에서 에러가 날것이다.
+- 왜냐하면 combine이라는 함수는 두 인자 모두 숫자타입이기 때문이다.
+- 그래서 각 인자의 타입을 string으로 바꾸자니
+- 첫번째 56을 추출하는 코드에서 오류가 발생한다.
+
+> 이럴 때, Union TYpe을 사용하는 것이다.
+
+- Union type은 아래와 같이 사용할 수 있다.
+```TS
+function combine(input1:number | string, input2:number | string) {
+    const result = input1 + input2;
+    return result;
+}
+```
+- 이렇게 작성하게 되면 result 부분에서 아래와 같은 에러가 발생하는데,
+> '+' 연산자를 'string | number' 및 'string | number' 형식에 적용할 수 없습니다.
+
+- 이는 타입스크립트가 유니언 타입만 이해할 뿐, 실제로 유니언 타입내에 무엇이 있는지는 분석하지 못하기 떄문이다.
+- 즉, 타입스크립트 입장에서는, 여러 타입을 입력하겠다고 했으니 어쩌면 그 안에 더하기 연산자를 사용할 수 없는 타입도 있겠네요~
+- 라고 말하는 것이다.
+
+- 이러한 문제를 해결하기 위해서는 타입에 따른 로직을 따로 구분할 수 있다.
+```TS
+function combine(input1: number | string, input2: number | string) {
+  if (typeof input1 === "number" && typeof input2 === "number") {
+    const result = input1 + input2;
+    return result
+  }
+  else {
+    const result = input1.toString() + input2.toString()
+    return result
+  }
+}
+```
+- 이렇게 하게 되면 input의 타입에 따라 진행되는 코드가 달라지기 때문에 에러를 만들지 않을 수 있게 된다.
+
+### 10. Literal Type
+- 리터럴 타입은 단순한 특정 변수나 매개변수가 아님
+- 숫자나 문자타입도 아니라 정확한 값을 가지는 타입을 말한다.
+- 예를 들어, 함수의 마지막 인자를 통해 로직을 구분지어야 할 때
+```TS
+function combine(input1: number | string, input2: number | string, convertResult : string) {
+  if (typeof input1 === "number" && typeof input2 === "number" || convertResult === 'as-number') {
+    const result = +input1 + +input2;
+    return result
+  }
+  else {
+    const result = input1.toString() + input2.toString()
+    return result
+  }
+}
+
+const combinedAges = combine(30, 26, 'as-number');
+console.log(combinedAges);
+
+const combineStringAges = combine('30', '26', 'as-number')
+console.log(combineStringAges)
+
+const combineName = combine("Max", "Anna", 'as-text');
+console.log(combineName);
+```
+- 위와 같은 방법으로 숫자를 문자열로 전달해도 다시 숫자 타입으로 변환한 후 더한 값을 return하게 된다.
+- 하지만 이것의 단점은 개발자가 정확한 값을 잘 기억해야 한다는 점과 오타를 내지 않도록 해야 한다는 점이다.
+> 이러한 문제를 해결하기 위해서는 enum을 사용해도 좋고 타입의 개수가 적다면 아래와 같이 명시해주는 것도 좋다.
+```TS
+function combine(
+  input1: number | string,
+  input2: number | string,
+  convertResult: 'as-number' | 'as-text'
+) {
+  if (
+    (typeof input1 === "number" && typeof input2 === "number") ||
+    convertResult === "as-number"
+  ) {
+    const result = +input1 + +input2;
+    return result;
+  } else {
+    const result = input1.toString() + input2.toString();
+    return result;
+  }
+}
+
+const combinedAges = combine(30, 26, "as-number");
+console.log(combinedAges);
+
+const combineStringAges = combine("30", "26", "as-number");
+console.log(combineStringAges);
+
+const combineName = combine("Max", "Anna", "as-text");
+console.log(combineName);
+```
+- 이렇게 작성하게 되면 오타를 내게 되었을 때 타입스크립트에서 오타를 바로 잡을 수 있다.
+
+### 11. Type aliases
+- 타입을 내가 커스텀 한다.
+- 보통 유니언 타입에 많이 쓰인다.
+- 왜냐하면 단일 타입에 별칭을 붙이게 되면 코드의 가독성이 떨어지기 때문이다.
+- 예를 들면,
+```TS
+type Combinable = number | string
+type ResultType = 'as-number' | 'as-text'
+
+function combine(
+  input1: Combinable,
+  input2: Combinable,
+  convertResult: ResultType
+) {
+  if (
+    (typeof input1 === "number" && typeof input2 === "number") ||
+    convertResult === "as-number"
+  ) {
+    const result = +input1 + +input2;
+    return result;
+  } else {
+    const result = input1.toString() + input2.toString();
+    return result;
+  }
+}
+```
+- 타입에 별칭을 정함으로써 코드 어디서든 일관된 이름으로 가져다 쓸 수 있는 장점이 있다.
+- (이건 내생각) 결국 또 다른 메모리를 차지하게 되는 것은 아닌가, 컴파일 할 때 없어지나?
