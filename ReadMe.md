@@ -539,3 +539,37 @@ addAndHandle(10,20,(result)=> {
 - 그리고 우리가 이미 함수의 반환 타입이 void라고 명시했음에도 불구하고 return 값을 설정하면 함수는 return을 하게 된다.
 - void라는 것은 아무리 값이 return 되어도 개발에 있어서는 무시될 내용이라는 것을 명시하는 것일 뿐
 - return을 하도록 하면 그에 해당하는 값을 return 하는 것이 정상인 것이다.
+
+### 15. Unknow
+- 어떤 사용자가 무엇을 입력할지 알수 없을 때 쓰는 타입.
+- 흥미로운 점은 에러없이 어떤 값이든 저장할 수 있다.
+- any랑은 또 다르고 any보다 엄격하다.
+- 현재 저장된 타입을 확인하는 과정을 거쳐야 사용할 수 있다.
+- 현재 타입과 같은 타입을 새로운 변수가 가져야만 사용가능하다.
+```TS
+let userInput: unknown;
+let userName: string;
+
+userInput = 5;
+userInput = "Max";
+
+if (typeof userInput === "string") {
+  userName = userInput;
+  console.log(userName) // Max
+}
+```
+
+### 16. never
+- 아무것도 반환하지 않는다.
+- void와의 차이점은 무엇인가.
+- void는 값을 반환 할 수 있지만 명시적으로 반환하지 않는다고 하는 것이고
+- never는 실제로 어떤 값도 반환하지 않는 것이다. 
+- 왜냐하면 이 상태에서 코드가 다음으로 넘어갈 수 없는 (에러표시) 상황에 쓰이기 때문이다.
+```TS
+function generateError(message : string, code :number) : never {
+    throw {message : message, errorCode : code};
+}
+
+const result = generateError('An error occurred', 500)
+console.log(result)
+```
