@@ -406,3 +406,136 @@ function combine(
 ```
 - 타입에 별칭을 정함으로써 코드 어디서든 일관된 이름으로 가져다 쓸 수 있는 장점이 있다.
 - (이건 내생각) 결국 또 다른 메모리를 차지하게 되는 것은 아닌가, 컴파일 할 때 없어지나?
+
+## 여기서부터는 함수에 대해서 자세히 알아보자
+
+### 12. void
+- 함수가 return 하는 값이 없을 때 사용 할 수 있다.
+- 예를 들어, 함수가 자체적으로 return 하는 값이 있을 경우 아래와 같이 명시해 줄수 있다.
+```TS
+function add(n1:number, n2:number) : number {
+    return n1 + n2
+}
+```
+- 이렇게 되면 number를 return 하는 값이라는 것을 알 수가 있다.
+- 하지만 아래와 같이 return 하는 값이 없을 경우에 
+```TS
+function printResult(num:number) : void {
+    console.log('Result is ' + num);    
+}
+```
+- printResult에 마우스를 호버해보면 아래와 같이 뜨는 것을 알 수 있다.
+> function printResult(num: number): void
+
+- 즉 해당 함수는 아무것도 반환하지 않는 다는 의미가 되는 것이다.
+- 이러한 함수의 return 값은 void type이라고 한다.
+
+### 13. Function Type
+- 변수의 타입을 함수라고 지정하는 것.
+- 예를 들어 하나의 변수를 선언하고 그 변수에 다른 함수를 할당한다고 하면,
+```TS
+function add(n1:number, n2:number) : number {
+    return n1 + n2
+}
+
+function printResult(num:number) {
+    console.log('Result is ' + num);    
+}
+
+let combineValues;
+combineValues = add;
+
+console.log(combineValues(8,8))
+```
+- 이렇게 되면 콘솔에는 16이라고 바르게 찍힐 것이다.
+- 하지만 combineValues라는 변수에 hover하게 되면 아래와 같이 보인다.
+> let combineValues: any
+- 이는 combineValues에 어떤것을 할당해도 된다는 의미이다. 예를 들어
+```TS
+let combineValues;
+combineValues = add;
+combineValues = 5
+```
+- 와 같이 할당해도 브라우저상에서 오류는 나지만, 컴파일하는데에는 문제가 없다. 
+- 왜냐하면 combineValues는 any 타입이기 때문에 무엇이든 들어올수가 있다.
+- 이를 방지하기 위해서 변수에 함수 타입이라고 명시하는 것이다.
+```TS
+function add(n1:number, n2:number) : number {
+    return n1 + n2
+}
+
+function printResult(num:number) {
+    console.log('Result is ' + num);    
+}
+
+// printResult(add(12,5))
+
+let combineValues : Function;
+combineValues = add;
+// combineValues = 5; // 'number' 형식은 'Function' 형식에 할당할 수 없습니다.
+
+console.log(combineValues(8,8))
+```
+- 이렇게 할당하게 되면 5를 할당하던 변수에는 에러가 나서 더이상 사용할수 없다.
+- 그렇다면 같은 변수에 인자를 한개 받는 함수를 할당하면 어떻게 될까.
+```TS
+function add(n1:number, n2:number) : number {
+    return n1 + n2
+}
+
+function printResult(num:number) {
+    console.log('Result is ' + num);    
+}
+
+// printResult(add(12,5))
+
+let combineValues : Function;
+combineValues = add;
+combineValues = printResult
+// combineValues = 5;
+
+console.log(combineValues(8,8))
+```
+- 위와 같이 인자를 한개를 받는 함수에 인자를 두개 전달하게 되면, 첫번쨰 인자로 하나의 결과를 낸 후 
+- 두번째 인자는 undefined라는 값을 갖게 된다.
+- 이러한 문제점을 해결하기 위해서 함수 타입에 대한 내용을 상세히 기술할 필요가 있다.
+```TS
+function add(n1:number, n2:number) : number {
+    return n1 + n2
+}
+
+function printResult(num:number) {
+    console.log('Result is ' + num);    
+}
+
+// printResult(add(12,5))
+
+let combineValues : (a:number, b:number) => number;
+combineValues = add;
+// combineValues = printResult 
+
+console.log(combineValues(8,8))
+```
+- 위와 같이 적게 되면, combineValues라는 변수에는 함수가 들어오는데, 그 함수는 두개의 숫자 타입을 인자로 받고 number 값을 return 한다. 라는 의미를 갖게 된다.
+- 그래서 저렇게 함수를 정의하고 나면 printResult를 할당했을 때 아래와 같은 에러가 뜬다.
+> '(num: number) => void' 형식은 '(a: number, b: number) => number' 형식에 할당할 수 없습니다.'void' 형식은 'number' 형식에 할당할 수 없습니다.
+
+### 14. Callback Function Type
+- 함수 안에서 callback 함수로 전달 했을 때 그에 맞는 타입을 정의해준다.
+- 예를 들어 3가지 인수를 받고 마지막 받은 콜백함수로 작업하는 함수를 만든다면,
+```TS
+function addAndHandle(n1 :number, n2 : number, cb: (num : number)=>void) {
+    const result = n1 + n2
+    cb(result)
+}
+
+addAndHandle(10,20,(result)=> {
+    console.log(result)
+})
+```
+- 이렇게 함수를 정의하는 것의 이점은 함수 내에 콜백함수를 전달하면 타입스크립트는 해당 결과가 number가 될 것임을 추론할 수 있다.
+- addAndHandle이라는 함수에서 result의 타입을 number라고 명시하지 않았음에도 number로 작업을 수행할 수 있는 이유는 우리가 addAndHandle이라는 함수를 정의할 때 콜백함수의 인자가 number라고 명시했기 때문이다.
+- 또한 우리가 해당 함수의 인자는 하나임을 명시했기 때문에 추가 인자가 발생할 경우에도 에러가 발생한다.
+- 그리고 우리가 이미 함수의 반환 타입이 void라고 명시했음에도 불구하고 return 값을 설정하면 함수는 return을 하게 된다.
+- void라는 것은 아무리 값이 return 되어도 개발에 있어서는 무시될 내용이라는 것을 명시하는 것일 뿐
+- return을 하도록 하면 그에 해당하는 값을 return 하는 것이 정상인 것이다.
